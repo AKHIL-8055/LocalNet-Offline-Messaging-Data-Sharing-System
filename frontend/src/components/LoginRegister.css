@@ -1,0 +1,208 @@
+/* =========================
+   Global
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* =========================
+   Main Layout
+========================= */
+.login-register-container {
+  min-height: 100vh;
+  display: flex;
+  background: #ffffff;
+}
+
+/* =========================
+   Left Section
+========================= */
+.login-register-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.92); /* Slight translucent white overlay for better readability if needed */
+}
+
+/* Center the content properly */
+.login-register-card > div {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* =========================
+   Logo
+========================= */
+.logo {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.logo h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b; /* Dark slate for better contrast on white */
+}
+
+.logo p {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #64748b; /* Muted gray-blue to match cool tones */
+}
+
+/* =========================
+   Tabs
+========================= */
+.tabs {
+ 
+  display: flex;
+  margin-left: 150px;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-size: 15px;
+  
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  padding-bottom: 6px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: #1e293b;
+  border-color: #f59e0b; /* Warm amber accent pulled from the coins and subtle highlights in the photo */
+}
+
+/* =========================
+   Form
+========================= */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+/* =========================
+   Inputs
+========================= */
+.input {
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+/* =========================
+   Button
+========================= */
+.auth-btn {
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.log{
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
+}
+
+.auth-btn-primary {
+  background: rgba(30, 58, 30, 0.9); /* Emerald primary button */
+  color: #ffffff;
+  
+}
+
+.auth-btn-primary:hover {
+  background: rgba(16, 185, 129, 0.3);
+  color: #0d7d5e;
+}
+
+.auth-btn-primary:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+}
+
+.auth-btn-block {
+  width: 100%;
+}
+
+/* =========================
+   Error Message
+========================= */
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* =========================
+   Info Box
+========================= */
+.info-box {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+}
+
+/* =========================
+   Right Image Section
+========================= */
+.image-side {
+  flex: 1;
+  background-image: url('../pics/pexels-canvastudio-3194519.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 900px) {
+  .login-register-container {
+    flex-direction: column;
+  }
+
+  .login-register-card {
+    padding: 40px 24px;
+  }
+
+  .image-side {
+    display: none;
+  }
+}
