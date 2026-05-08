@@ -64,8 +64,12 @@ public class FileUploadController {
             if (contentType != null) {
                 if (contentType.startsWith("image/")) {
                     fileType = "image";
+                } else if (contentType.startsWith("audio/")) {
+                    fileType = "audio";
                 } else if (contentType.equals("application/pdf")) {
                     fileType = "pdf";
+                } else if (contentType.equals("application/zip") || contentType.equals("application/x-zip-compressed")) {
+                    fileType = "zip";
                 } else if (contentType.contains("document") || contentType.contains("text")) {
                     fileType = "document";
                 }

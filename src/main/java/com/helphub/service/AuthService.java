@@ -20,9 +20,31 @@ public class AuthService {
     }
 
     /**
+     * Hash password
+     */
+    private String hashPassword(String password) {
+        if (password == null || password.isEmpty()) return null;
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder(2 * hash.length);
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Register a new user
      */
-    public AuthResponse register(String username, String fullName, String phone) {
+    public AuthResponse register(String username, String password, String fullName, String phone) {
         try {
             // Check if username already exists
             User existing = db.findUserByUsername(username);
@@ -31,7 +53,8 @@ public class AuthService {
             }
 
             // Create user
-            User user = db.createUser(username, fullName, phone);
+            String hashedPassword = hashPassword(password);
+            User user = db.createUser(username, hashedPassword, fullName, phone);
             String token = jwtService.generateToken(username);
 
             return new AuthResponse(true, "Registration successful", token, user);
@@ -43,11 +66,20 @@ public class AuthService {
     /**
      * Login existing user
      */
-    public AuthResponse login(String username) {
+    public AuthResponse login(String username, String password) {
         try {
             User user = db.findUserByUsername(username);
             if (user == null) {
                 return new AuthResponse(false, "User not found", null, null);
+            }
+
+            // Verify password
+            String hashedPassword = hashPassword(password);
+            if (user.getPassword() != null && !user.getPassword().equals(hashedPassword)) {
+                // To support existing users without password, only check if password exists
+                return new AuthResponse(false, "Invalid password", null, null);
+            } else if (user.getPassword() == null && password != null && !password.isEmpty()) {
+                 return new AuthResponse(false, "This account does not have a password. Leave password empty to login.", null, null);
             }
 
             String token = jwtService.generateToken(username);

@@ -335,8 +335,11 @@ function Chat({ user, token, onBack, onLogout }) {
   const [fileInput, setFileInput] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [dmRecipient, setDmRecipient] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
+  const mediaRecorderRef = useRef(null)
+  const audioChunksRef = useRef([])
 
   useEffect(() => {
     // Get server info
@@ -467,6 +470,41 @@ function Chat({ user, token, onBack, onLogout }) {
     }
   }
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      audioChunksRef.current = []
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
+        }
+      }
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        const audioFile = new File([audioBlob], `voice_message_${Date.now()}.webm`, { type: 'audio/webm' })
+        setFileInput(audioFile)
+      }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+    } catch (err) {
+      console.error('Error accessing microphone:', err)
+      alert('Could not access microphone. Please check permissions.')
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop())
+    }
+  }
+
   const handleSOS = () => {
     if (confirm('Send SOS emergency message to all users?')) {
       websocket.sendSOS('SOS - Emergency assistance needed!')
@@ -575,6 +613,10 @@ function Chat({ user, token, onBack, onLogout }) {
                       className="message-image"
                       onClick={() => window.open(msg.fileUrl, '_blank')}
                     />
+                  ) : msg.fileType === 'audio' ? (
+                    <audio controls src={msg.fileUrl} className="message-audio">
+                      Your browser does not support the audio element.
+                    </audio>
                   ) : (
                     <a 
                       href={msg.fileUrl} 
@@ -610,11 +652,19 @@ function Chat({ user, token, onBack, onLogout }) {
             onChange={handleFileSelect}
             className="file-input"
             id="file-input"
-            accept="image/*,application/pdf,.doc,.docx"
           />
           <label htmlFor="file-input" className="btn btn-secondary btn-file">
             <p>File</p>
           </label>
+          <button 
+            type="button"
+            className={`btn ${isRecording ? 'btn-danger' : 'btn-secondary'} btn-record`}
+            onClick={isRecording ? stopRecording : startRecording}
+            disabled={uploading || connectionStatus !== 'connected'}
+            style={{ marginLeft: '8px', padding: '0 12px' }}
+          >
+            {isRecording ? 'Stop' : 'Mic'}
+          </button>
           {fileInput && (
             <span className="file-name">{fileInput.name}</span>
           )}

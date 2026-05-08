@@ -304,6 +304,18 @@
   justify-content: flex-end;
 }
 
+.btn-danger {
+  background: #e74c3c !important;
+  color: white !important;
+  border-color: #c0392b !important;
+}
+
+.message-audio {
+  max-width: 100%;
+  border-radius: 8px;
+  outline: none;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .chat-header {

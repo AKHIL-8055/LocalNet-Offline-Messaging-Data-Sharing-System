@@ -33,12 +33,20 @@ public class Db {
                     "CREATE TABLE IF NOT EXISTS users (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "username TEXT UNIQUE NOT NULL," +
+                    "password TEXT," +
                     "full_name TEXT NOT NULL," +
                     "phone TEXT," +
                     "created_at TEXT NOT NULL," +
                     "online INTEGER DEFAULT 0" +
                     ")"
                 );
+            }
+            
+            // Add password column to existing DB if missing
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("ALTER TABLE users ADD COLUMN password TEXT");
+            } catch (SQLException e) {
+                // Ignore, column already exists
             }
 
             // Messages table
@@ -82,19 +90,20 @@ public class Db {
     /**
      * Create a new user
      */
-    public User createUser(String username, String fullName, String phone) throws SQLException {
+    public User createUser(String username, String password, String fullName, String phone) throws SQLException {
         try (Connection conn = getConnection()) {
-            String sql = "INSERT INTO users (username, full_name, phone, created_at) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO users (username, password, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, username);
-            stmt.setString(2, fullName);
-            stmt.setString(3, phone);
-            stmt.setString(4, LocalDateTime.now().toString());
+            stmt.setString(2, password);
+            stmt.setString(3, fullName);
+            stmt.setString(4, phone);
+            stmt.setString(5, LocalDateTime.now().toString());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
-                User user = new User(username, fullName, phone);
+                User user = new User(username, password, fullName, phone);
                 user.setId(rs.getLong(1));
                 // created_at is already set in User constructor, no need to read from ResultSet
                 // getGeneratedKeys() only returns generated keys, not all columns
@@ -118,6 +127,7 @@ public class Db {
                 User user = new User();
                 user.setId(rs.getLong("id"));
                 user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
                 user.setCreatedAt(LocalDateTime.parse(rs.getString("created_at")));

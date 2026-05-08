@@ -7,7 +7,7 @@ import './App.css'
 const API_BASE = '/api'
 
 function App() {
-  const [currentView, setCurrentView] = useState('login') // login, dashboard, chat
+  const [currentView, setCurrentView] = useState('login')
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
 

@@ -144,6 +144,7 @@ import './LoginRegister.css'
 function LoginRegister({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true)
   const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
@@ -157,8 +158,8 @@ function LoginRegister({ onLogin }) {
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register'
       const body = isLogin 
-        ? { username }
-        : { username, fullName, phone: phone || null }
+        ? { username, password }
+        : { username, password, fullName, phone: phone || null }
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -218,6 +219,18 @@ function LoginRegister({ onLogin }) {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 placeholder="Enter username"
+                className="input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Password *</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Enter password"
                 className="input"
               />
             </div>

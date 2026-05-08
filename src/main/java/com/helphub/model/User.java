@@ -10,14 +10,16 @@ public class User {
     private String username;
     private String fullName;
     private String phone;
+    private String password;
     private LocalDateTime createdAt;
     private boolean online;
 
     public User() {
     }
 
-    public User(String username, String fullName, String phone) {
+    public User(String username, String password, String fullName, String phone) {
         this.username = username;
+        this.password = password;
         this.fullName = fullName;
         this.phone = phone;
         this.createdAt = LocalDateTime.now();
@@ -71,6 +73,14 @@ public class User {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 
